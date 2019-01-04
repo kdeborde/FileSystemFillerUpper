@@ -10,7 +10,7 @@ file_name = datetime.now().strftime("%Y%m%d-%H%M%S.txt")
 
 
 # Function to loop and add data to a file
-def fillUpFileSystem(amount_to_add, start_time):
+def fill_up_file_system(amount_to_add, start_time):
     add_data = 0
     count = 2
 
@@ -21,20 +21,21 @@ def fillUpFileSystem(amount_to_add, start_time):
     # Loop through and add data to file.
     while add_data <= amount_to_add:
         start = time.time()
-        add_data = getFileSize(file_name)
+        add_data = get_file_size(file_name)
         log_open.write(str(count))
         count += count
         end = time.time()
-        should_reset = getTimeToCompete(start, end)
+        should_reset = get_time_to_reset(start, end)
 
-        if should_reset > .0001:
+        # Adjust time based on compute power.
+        if should_reset > 1.0:
             count = 2
 
     print("\nTotal size of file added is " + str(add_data) + "M\n")
 
 
 # Function to ask the user how much data to add and ensure it's a valid number.
-def dataToAdd():
+def date_to_add():
     input_amount = ""
     # Verify an integer is entered.
     while input_amount == "":
@@ -50,22 +51,23 @@ def dataToAdd():
 
 
 # Function to get the file size, convert to Mb and return.
-def getFileSize(file_size):
+def get_file_size(file_size):
     file_info = os.stat(file_size)
     file_info = os.path.getsize(file_size)
     file_info /= 1000000
     return file_info
 
-def getTimeToCompete(start, end):
+# Function to compare start/end time to reset counter.
+def get_time_to_reset(start, end):
     should_reset = end - start
     print(should_reset)
     return should_reset
 
 
 # Invoke function for user input of file size
-# add_the_data = dataToAdd()
+# add_the_data = date_to_add()
 
 # Invoke function to start generating numbers in a file
-fillUpFileSystem(dataToAdd(), file_name)
+fill_up_file_system(date_to_add(), file_name)
 
 input("Press enter to close... ")
