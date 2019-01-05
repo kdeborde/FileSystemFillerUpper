@@ -1,10 +1,10 @@
-import os
-import time
 from datetime import datetime
+import os
+import shutil
+import time
 
-# TODO: Make an option for 'ALL' to just filler on up.
 # TODO: Add option for user to choose path of file.
-# TODO: Make some names more descriptive/trim it down.
+# TODO: Actually calculate MB or MiB properly.
 
 file_name = datetime.now().strftime("%Y%m%d-%H%M%S.txt")
 
@@ -15,7 +15,7 @@ def fill_up_file_system(amount_to_add, start_time):
     count = 2
 
     absolute_path = os.path.abspath(file_name)
-    print("\nWriting " + str(amount_to_add) + "M of data to file: " + absolute_path)
+    print("\nWriting " + str(amount_to_add) + " M of data to file: " + absolute_path)
     log_open = open(start_time, 'w')
 
     start_elapsed_time = time.time()
@@ -38,13 +38,24 @@ def fill_up_file_system(amount_to_add, start_time):
     print("Elapsed time: " + str(total_time_taken) + " seconds\n\n")
 
 
+def get_disk_statistics():
+    total, used, free = shutil.disk_usage("\\")
+    total /= 1000000
+    used /= 1000000
+    free /= 1000000
+    return int(total), int(used), int(free)
+
+
 # Function to ask the user how much data to add and ensure it's a valid number.
-def date_to_add():
+def data_to_add():
     input_amount = ""
     # Verify an integer is entered.
     while input_amount == "":
         try:
-            input_amount = input("Enter \"ALL\" to filler up.\nEnter the amount of data you would like to add in MB: ")
+            input_amount = input("Enter \"ALL\" to fill it up.\nEnter the amount of data you would like to add in MB: ")
+            if input_amount == 'ALL':
+                input_amount = get_disk_statistics()[2]
+                break
             input_amount = int(input_amount)
         except ValueError:
             print("Not a valid int!")
@@ -70,8 +81,15 @@ def elapsed_time(start_elapsed_time, end_elapsed_time):
     return end_elapsed_time - start_elapsed_time
 
 
+# print disk statistics
+print("\nDisk Statistics: \n")
+print("Total disk size: " + str(get_disk_statistics()[0]) + " M")
+print("Used disk space: " + str(get_disk_statistics()[1]) + " M")
+print("Free disk space: " + str(get_disk_statistics()[2]) + " M\n")
+
+
 # Invoke function to start generating numbers in a file
-fill_up_file_system(date_to_add(), file_name)
+fill_up_file_system(data_to_add(), file_name)
 
 
 input("Press enter or Ctl + C to close... ")
