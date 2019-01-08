@@ -13,9 +13,10 @@ file_name = datetime.now().strftime("%Y%m%d-%H%M%S.txt")
 def fill_up_file_system(amount_to_add, start_time):
     add_data = 0
     count = 2
+    progress_update = 1
 
     absolute_path = os.path.abspath(file_name)
-    print("\nWriting " + str(amount_to_add) + " M of data to file: " + absolute_path)
+    print("\nWriting " + str(amount_to_add) + " M of data to file: " + absolute_path + "\n\n")
     log_open = open(start_time, 'w')
 
     start_elapsed_time = time.time()
@@ -28,13 +29,19 @@ def fill_up_file_system(amount_to_add, start_time):
         end_write = time.time()
         should_reset = get_time_to_reset(start_write, end_write)
 
+        # Print current progress
+        progress_update += 1
+        if progress_update == 50:
+            get_progress(add_data, amount_to_add)
+            progress_update = 1
+
         # Adjust time based on compute power.
         if should_reset > 1.0:
             count = 2
 
     end_elapsed_time = time.time()
     total_time_taken = round(elapsed_time(start_elapsed_time, end_elapsed_time), 3)
-    print("\nTotal size of file added is " + str(add_data) + "M\n")
+    print("\n\nTotal size of file added is " + str(add_data) + "M\n")
     print("Elapsed time: " + str(total_time_taken) + " seconds\n\n")
 
 
@@ -79,6 +86,14 @@ def get_time_to_reset(start_write, end_write):
 # Get elapsed time of adding to file
 def elapsed_time(start_elapsed_time, end_elapsed_time):
     return end_elapsed_time - start_elapsed_time
+
+
+# Print percentage and size completed.
+def get_progress(current_progress, max_progress):
+    current_progress = round(current_progress, 1)
+    size_progress = str(current_progress) + " of " + str(max_progress) + "M"
+    progress_percentage = round(((current_progress * 100) / max_progress), 1)
+    print("Completion: " + str(progress_percentage) + "% ----- " + size_progress, end="\r")
 
 
 # print disk statistics
