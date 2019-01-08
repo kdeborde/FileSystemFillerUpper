@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import shutil
 import time
+import sys
 
 # TODO: Add option for user to choose path of file.
 # TODO: Actually calculate MB or MiB properly.
@@ -46,7 +47,15 @@ def fill_up_file_system(amount_to_add, start_time):
 
 
 def get_disk_statistics():
-    total, used, free = shutil.disk_usage("\\")
+    if sys.platform == 'linux':
+        total, used, free = shutil.disk_usage("/")
+    elif sys.platform == 'win32':
+        total, used, free = shutil.disk_usage("\\")
+    else:
+        print("unsupported platform!")
+        input("Press any key to exit... ")
+        exit()
+
     total /= 1000000
     used /= 1000000
     free /= 1000000
